@@ -36,19 +36,16 @@ jobs:
           New-Item -ItemType Directory -Path dist | Out-Null
           Copy-Item build/Release/ToasterSquadron.scr dist/
           Copy-Item README.md,LICENSE dist/
-          Copy-Item docs/ART-BRIEF.md dist/
+          Copy-Item docs dist/docs -Recurse
           Copy-Item assets dist/assets -Recurse
-          if (Test-Path screenshot.png) { Copy-Item screenshot.png dist/ }
+          if (Test-Path screenshot.png) { Copy-Item screenshot.png dist/docs/screenshot.png }
           $hash = (Get-FileHash dist/ToasterSquadron.scr -Algorithm SHA256).Hash.ToLower()
           "$hash  ToasterSquadron.scr" | Set-Content dist/SHA256SUMS.txt
-          Compress-Archive -Path dist/* -DestinationPath ToasterSquadron-windows-x64.zip
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: ToasterSquadron-windows-x64
-          path: |
-            dist/
-            ToasterSquadron-windows-x64.zip
+          path: dist/
           retention-days: 30
           if-no-files-found: error
 
@@ -72,4 +69,5 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          gh release create $env:RELEASE_TAG release-artifact/dist/ToasterSquadron.scr release-artifact/ToasterSquadron-windows-x64.zip release-artifact/dist/SHA256SUMS.txt --verify-tag --title "Toaster Squadron $env:RELEASE_TAG" --generate-notes
+          Compress-Archive -Path release-artifact/* -DestinationPath ToasterSquadron-windows-x64.zip
+          gh release create $env:RELEASE_TAG release-artifact/ToasterSquadron.scr ToasterSquadron-windows-x64.zip release-artifact/SHA256SUMS.txt --verify-tag --title "Toaster Squadron $env:RELEASE_TAG" --generate-notes
