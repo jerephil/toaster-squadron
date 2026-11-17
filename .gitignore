@@ -1,0 +1,10 @@
+/build*/
+/out/
+/.vs/
+/.idea/
+CMakeUserPresets.json
+*.user
+*.suo
+*.scr
+*.zip
+__pycache__/
