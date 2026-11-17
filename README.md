@@ -2,7 +2,7 @@
 
 My personal, free Windows 11 screensaver: original chunky pixel-art winged toasters and toast drift diagonally across a neon sunset and scrolling perspective grid. C++20, Win32, Direct2D; no audio or external runtime to install.
 
-**Early build — awaiting my Windows 11 PC test.** [The art brief](docs/ART-BRIEF.md) defines my sprite sheets and palette. 
+**Early build — awaiting my Windows 11 PC test.** [The art brief](docs/ART-BRIEF.md) defines my sprite sheets and palette.
 
 ![My running Toaster Squadron build with original placeholder sprites over the synthwave backdrop](docs/screenshot.png)
 
