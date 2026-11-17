@@ -10,7 +10,7 @@ CI proves the MSVC build and automated window contracts on a GitHub-hosted Windo
 6. On separate starts, exit by key, left/right/middle click, and mouse movement. The first 1.2 seconds of mouse jitter are ignored, then displacement over 8 physical pixels from the settled anchor exits. Tiny repeated movements must eventually exceed the anchor threshold. Cursor visibility should restore on exit.
 7. Let the saver run for at least two hours. In Task Manager, inspect CPU, GPU, private memory, and handle counts at the start and end. Initial driver/cache warm-up can increase memory; continuing growth warrants investigation. Try lock/unlock, display sleep/wake, and monitor hotplug. Hotplug exits so Windows can relaunch with fresh monitor bounds. GPU device loss is handled by rebuilding the rendering resources; unrecoverable errors exit with status 2.
 8. For art replacement, copy the four matching sheets into `assets/` beside the `.scr`, or replace the repo sheets and rebuild. Test transparent edges and all flap poses. Incorrect dimensions or broken PNGs must fall back to the embedded sheet. Remove the external folder to restore embedded art.
-9. Capture an actual running screenshot/GIF for the README, and send any visual/performance issues. Explicitly approve publishing only after this checklist is satisfactory. Do not create `v0.1.0` before that approval.
+9. The README includes an actual screenshot captured from the running CI build. Capture a preferred Windows 11 screenshot/GIF if desired, and send any visual/performance issues. Explicitly approve publishing only after this checklist is satisfactory. Do not create `v0.1.0` before that approval.
 
 ## CI scope and architecture
 
