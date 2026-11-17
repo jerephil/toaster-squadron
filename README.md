@@ -1,8 +1,8 @@
 # Toaster Squadron
 
-Jeremy's personal, free Windows 11 screensaver: original chunky pixel-art winged toasters and toast drift diagonally across a neon sunset and scrolling perspective grid. C++20, Win32, Direct2D; no audio or external runtime to install.
+My personal, free Windows 11 screensaver: original chunky pixel-art winged toasters and toast drift diagonally across a neon sunset and scrolling perspective grid. C++20, Win32, Direct2D; no audio or external runtime to install.
 
-**In development.** [The art brief](docs/ART-BRIEF.md) is ready for Jeremy; the first Windows build is coming next. Screenshots/GIF: TODO — capture the running Windows build after PC testing.
+**In development.** [The art brief](docs/ART-BRIEF.md) is ready for my art workflow; the first Windows build is coming next. Screenshots/GIF: TODO — capture the running Windows build after PC testing.
 
 Toaster Squadron is an independent, original project and is not affiliated with or endorsed by Berkeley Systems or the makers of After Dark.
 
@@ -14,7 +14,7 @@ Download `ToasterSquadron.scr` from a green GitHub Actions build. Right-click it
 - `ToasterSquadron.scr /p <HWND>`: live child preview for Windows Screen Saver Settings.
 - `ToasterSquadron.scr /c` or no arguments: settings.
 
-No version tag or Release will be created until Jeremy tries the CI artifact on his Windows 11 PC and approves.
+No version tag or Release will be created until I try the CI artifact on my Windows 11 PC and approve it.
 
 ## Planned settings
 
