@@ -151,7 +151,8 @@ int Run(HINSTANCE instance, Options options) {
     // A one-shot waitable timer caps high-refresh screens at 60 fps, while
     // DXGI Present(1) synchronizes the primary output. Other windows use the
     // composited desktop without serial waits for each monitor's vblank.
-    HANDLE timer = CreateWaitableTimerW(nullptr, FALSE, nullptr);
+    HANDLE timer = CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
+    if (!timer) timer = CreateWaitableTimerW(nullptr, FALSE, nullptr);
     if (!timer) {
         for (const auto& window : app.windows) DestroyWindow(window->handle);
         return 2;

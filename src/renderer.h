@@ -17,13 +17,13 @@ public:
     HRESULT Render(double elapsed, float delta, bool synchronize);
 private:
     template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
-    struct Flyer { float x, y, speed, phase, rollAt; bool toast; };
+    struct Flyer { float x, y, speed, phase; double rollAt; bool toast; };
     struct Star { float x, y, brightness; };
     HWND window_;
     Settings settings_;
     UINT width_ = 0, height_ = 0;
     int scale_ = 1;
-    float animationTime_ = 0;
+    double animationTime_ = 0;
     std::mt19937 random_;
     std::vector<Flyer> flyers_;
     std::vector<Star> stars_;
