@@ -26,6 +26,10 @@ jobs:
         run: cmake --build build --config Release --parallel
       - name: Test screensaver contract on Windows
         run: ctest --test-dir build -C Release --output-on-failure
+      - name: Capture actual running saver (when desktop capture is available)
+        continue-on-error: true
+        shell: pwsh
+        run: ./tools/capture_screenshot.ps1 -Saver build/Release/ToasterSquadron.scr -Output screenshot.png
       - name: Package standalone saver and source art
         shell: pwsh
         run: |
@@ -34,6 +38,7 @@ jobs:
           Copy-Item README.md,LICENSE dist/
           Copy-Item docs/ART-BRIEF.md dist/
           Copy-Item assets dist/assets -Recurse
+          if (Test-Path screenshot.png) { Copy-Item screenshot.png dist/ }
           $hash = (Get-FileHash dist/ToasterSquadron.scr -Algorithm SHA256).Hash.ToLower()
           "$hash  ToasterSquadron.scr" | Set-Content dist/SHA256SUMS.txt
           Compress-Archive -Path dist/* -DestinationPath ToasterSquadron-windows-x64.zip

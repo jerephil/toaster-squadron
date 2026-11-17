@@ -118,6 +118,28 @@ void PreviewTest(const std::wstring& executable) {
     UnregisterClassW(wc.lpszClassName, wc.hInstance);
 }
 BOOL CALLBACK CountMonitor(HMONITOR, HDC, LPRECT, LPARAM data) { ++*reinterpret_cast<int*>(data); return TRUE; }
+void MouseTest(const std::wstring& executable) {
+    struct RestoreCursor {
+        POINT point{};
+        RestoreCursor() { GetCursorPos(&point); }
+        ~RestoreCursor() { SetCursorPos(point.x, point.y); }
+    } restore;
+    Process process(executable, L"/s");
+    const auto windows = Windows(process);
+    const auto bounds = [] {
+        RECT rect{};
+        GetWindowRect(GetDesktopWindow(), &rect);
+        return rect;
+    }();
+    const int x = (bounds.left + bounds.right) / 2;
+    const int y = (bounds.top + bounds.bottom) / 2;
+    SetCursorPos(x, y);
+    Check(WaitForSingleObject(process.info.hProcess, 1600) == WAIT_TIMEOUT, "Saver exited during mouse settling");
+    SetCursorPos(x + 4, y + 4);
+    Check(WaitForSingleObject(process.info.hProcess, 150) == WAIT_TIMEOUT, "Small mouse jitter exited saver");
+    SetCursorPos(x + 24, y + 24);
+    process.Exited();
+}
 void FullscreenTest(const std::wstring& executable, UINT input) {
     Process process(executable, L"/s");
     auto windows = Windows(process);
@@ -155,8 +177,9 @@ int wmain(int argc, wchar_t** argv) {
         PreviewTest(executable);
         FullscreenTest(executable, WM_KEYDOWN);
         FullscreenTest(executable, WM_LBUTTONDOWN);
+        MouseTest(executable);
         { Process invalid(executable, L"/p:0"); invalid.Exited(2); }
-        std::cout << "PASS: parser, settings bounds, /c, default settings, live /p resize/lifecycle, /s monitor coverage and key/click exit.\n";
+        std::cout << "PASS: parser, settings bounds, /c, default settings, live /p resize/lifecycle, /s monitor coverage and key/click/mouse exit.\n";
         return 0;
     } catch (const std::exception& error) {
         std::cerr << "FAIL: " << error.what() << '\n';

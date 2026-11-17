@@ -58,9 +58,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         break;
     case WM_DPICHANGED:
         if (!preview) {
-            const auto* rect = reinterpret_cast<RECT*>(lp);
-            SetWindowPos(hwnd, HWND_TOPMOST, rect->left, rect->top, rect->right - rect->left,
-                         rect->bottom - rect->top, SWP_NOACTIVATE);
+            MONITORINFO monitor{sizeof(monitor)};
+            if (GetMonitorInfoW(MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST), &monitor)) {
+                const auto& rect = monitor.rcMonitor;
+                SetWindowPos(hwnd, HWND_TOPMOST, rect.left, rect.top, rect.right - rect.left,
+                             rect.bottom - rect.top, SWP_NOACTIVATE);
+            }
         }
         return 0;
     case WM_DISPLAYCHANGE:

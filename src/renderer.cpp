@@ -83,7 +83,7 @@ HRESULT Renderer::Decode(IWICBitmapDecoder* decoder, ID2D1Bitmap** result) {
     if (FAILED(hr)) return hr;
     const auto properties = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM,
                                                                   D2D1_ALPHA_MODE_PREMULTIPLIED), 96, 96);
-    return context_->ID2D1RenderTarget::CreateBitmapFromWicBitmap(converter.Get(), &properties, result);
+    return static_cast<ID2D1RenderTarget*>(context_.Get())->CreateBitmapFromWicBitmap(converter.Get(), &properties, result);
 }
 HRESULT Renderer::LoadSprite(const wchar_t* filename, int resource, ID2D1Bitmap** result) {
     wchar_t module[32768]{};
@@ -139,7 +139,7 @@ HRESULT Renderer::Resize() {
         {0.67f, Color(sunset ? 0x87315f : 0x8c246d)}, {1.0f, Color(0x160d32)}
     };
     ComPtr<ID2D1GradientStopCollection> collection;
-    hr = context_->ID2D1RenderTarget::CreateGradientStopCollection(stops, static_cast<UINT32>(std::size(stops)), &collection);
+    hr = static_cast<ID2D1RenderTarget*>(context_.Get())->CreateGradientStopCollection(stops, static_cast<UINT32>(std::size(stops)), &collection);
     if (FAILED(hr)) return hr;
     sky_.Reset();
     hr = context_->CreateLinearGradientBrush(D2D1::LinearGradientBrushProperties(
@@ -179,7 +179,7 @@ void Renderer::Backdrop(double elapsed) {
     else context_->FillRectangle(D2D1::RectF(0, 0, w, h), sky_.Get());
     context_->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
     for (const auto& star : stars_) {
-        const float x = std::floor(star.x * w), y = std::floor(star.y * h);
+        const float x = std::floor(star.x * w), y = std::floor(star.y * h * (settings_.backdrop == 2 ? 1.0f / 0.59f : 1.0f));
         const float size = static_cast<float>(std::max(1, scale_ / 2));
         Rect(x, y, x + size, y + size, Color(0xe0d9ff, star.brightness));
     }
@@ -260,7 +260,7 @@ void Renderer::DrawFlyers(float delta) {
         const int sheet = flyer.toast ? settings_.doneness + 1 : 0;
         const auto source = D2D1::RectF(static_cast<float>(frame * 48), 0, static_cast<float>((frame + 1) * 48), 48);
         const auto dest = D2D1::RectF(x, y, x + size, y + size);
-        context_->ID2D1RenderTarget::DrawBitmap(sprites_[sheet].Get(), &dest, 1, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, &source);
+        static_cast<ID2D1RenderTarget*>(context_.Get())->DrawBitmap(sprites_[sheet].Get(), &dest, 1, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, &source);
     }
     context_->SetTransform(D2D1::Matrix3x2F::Identity());
 }
