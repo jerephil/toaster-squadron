@@ -2,7 +2,7 @@ param(
     [Parameter(Mandatory=$true)][string]$Saver,
     [Parameter(Mandatory=$true)][string]$Output
 )
-# Capture pixels from the actual running saver on the hosted Windows desktop.
+# I capture pixels from my actual running saver on the hosted Windows desktop.
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName System.Windows.Forms

@@ -37,9 +37,9 @@ private:
     ComPtr<ID2D1Bitmap1> target_;
     ComPtr<ID2D1SolidColorBrush> brush_;
     ComPtr<ID2D1LinearGradientBrush> sky_;
-    ComPtr<ID2D1Bitmap> backdropLayer_;  // pixel-art sun, ridges, grid floor at base scale
+    ComPtr<ID2D1Bitmap> backdropLayer_;  // I cache my pixel-art sun, ridges, and grid floor at base scale.
     BackdropLayout layout_;
-    std::vector<GridRow> gridRows_;  // reused every frame
+    std::vector<GridRow> gridRows_;  // I reuse this buffer every frame.
     ComPtr<IWICImagingFactory> wic_;
     std::array<ComPtr<ID2D1Bitmap>, 4> sprites_;
     HRESULT Resize();

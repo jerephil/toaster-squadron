@@ -145,7 +145,7 @@ void FullscreenTest(const std::wstring& executable, UINT input) {
     auto windows = Windows(process);
     int monitors = 0;
     EnumDisplayMonitors(nullptr, nullptr, CountMonitor, reinterpret_cast<LPARAM>(&monitors));
-    // Window creation and GPU initialization happen one output at a time.
+    // I create windows and initialize the GPU one output at a time.
     const ULONGLONG end = GetTickCount64() + 10000;
     while (static_cast<int>(windows.size()) < monitors && GetTickCount64() < end) {
         Pump();

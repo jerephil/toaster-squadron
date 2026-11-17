@@ -67,7 +67,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
         }
         return 0;
     case WM_DISPLAYCHANGE:
-        // Let Windows restart the saver with fresh monitor bounds after hotplug.
+        // I let Windows restart the saver with fresh monitor bounds after hotplug.
         if (!preview) PostQuitMessage(0);
         return 0;
     case WM_POWERBROADCAST:
@@ -148,9 +148,9 @@ int Run(HINSTANCE instance, Options options) {
     }
     CursorGuard cursor(!app.preview);
     if (!app.preview) SetForegroundWindow(app.windows.front()->handle);
-    // A one-shot waitable timer caps high-refresh screens at 60 fps, while
-    // DXGI Present(1) synchronizes the primary output. Other windows use the
-    // composited desktop without serial waits for each monitor's vblank.
+    // I cap high-refresh screens at 60 fps with a one-shot waitable timer and
+    // synchronize the primary output with DXGI Present(1). I present other windows
+    // through desktop composition without serial waits for each monitor's vblank.
     HANDLE timer = CreateWaitableTimerExW(nullptr, nullptr, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
     if (!timer) timer = CreateWaitableTimerW(nullptr, FALSE, nullptr);
     if (!timer) {
@@ -201,14 +201,14 @@ int Run(HINSTANCE instance, Options options) {
         const float delta = std::clamp(std::chrono::duration<float>(now - previous).count(), 0.0f, 0.1f);
         previous = now;
         nextFrame = now + std::chrono::microseconds(16667);
-        // Draw secondary monitors first, then the output that supplies pacing.
+        // I draw secondary monitors first, then the output that supplies pacing.
         for (size_t n = 0; n < app.windows.size(); ++n) {
             const size_t index = (n + 1) % app.windows.size();
             auto& window = app.windows[index];
             if (IsIconic(window->handle)) continue;
             const HRESULT hr = window->renderer->Render(elapsed, delta, index == 0);
             if (FAILED(hr)) {
-                // Release every resource owned by the removed device before recreation.
+                // I release every resource owned by the removed device before recreation.
                 window->renderer.reset();
                 window->renderer = std::make_unique<Renderer>(window->handle, app.settings);
                 if (FAILED(window->renderer->Initialize())) { exitCode = 2; running = false; break; }
@@ -228,7 +228,7 @@ int Run(HINSTANCE instance, Options options) {
 } // namespace ts
 
 int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int) {
-    // The embedded PerMonitorV2 manifest establishes awareness before any HWND.
+    // I establish DPI awareness through the embedded PerMonitorV2 manifest before any HWND.
     int argc = 0;
     auto** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     if (!argv) return 2;

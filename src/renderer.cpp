@@ -30,7 +30,7 @@ HRESULT Renderer::Initialize() {
     ComPtr<IDXGIDevice> dxgi;
     hr = d3d_.As(&dxgi);
     if (FAILED(hr)) return hr;
-    // Keep each output's queue short; only the pacing output waits for vblank.
+    // I keep each output's queue short and wait for vblank only on the pacing output.
     ComPtr<IDXGIDevice1> dxgi1;
     if (SUCCEEDED(dxgi.As(&dxgi1))) dxgi1->SetMaximumFrameLatency(1);
     hr = factory_->CreateDevice(dxgi.Get(), &device_);
@@ -153,7 +153,7 @@ HRESULT Renderer::Resize() {
 HRESULT Renderer::BuildBackdrop() {
     backdropLayer_.Reset();
     if (settings_.backdrop == 2) return S_OK;
-    // Same base scale as the 48x48 sprites, so backdrop pixels and sprite pixels match in size.
+    // I use the same base scale as my 48x48 sprites so backdrop and sprite pixels match in size.
     const auto pixelScale = static_cast<UINT>(scale_);
     const int baseW = static_cast<int>((width_ + pixelScale - 1) / pixelScale);
     const int baseH = static_cast<int>((height_ + pixelScale - 1) / pixelScale);
@@ -169,7 +169,7 @@ HRESULT Renderer::BuildBackdrop() {
 void Renderer::ResetFlyers() {
     flyers_.clear();
     flyers_.reserve(static_cast<size_t>(settings_.flyers));
-    // Exact nearest-integer ratio rather than a new random population per frame.
+    // I round the toast population to the nearest integer and keep it fixed between resets.
     const int toastCount = (settings_.flyers * settings_.toastRatio + 50) / 100;
     const float w = static_cast<float>(width_), h = static_cast<float>(height_);
     for (int i = 0; i < settings_.flyers; ++i) {
@@ -199,12 +199,12 @@ void Renderer::Backdrop(double elapsed) {
         Rect(x, y, x + size, y + size, Color(0xe0d9ff, star.brightness));
     }
     if (settings_.backdrop == 2 || !backdropLayer_) return;
-    // Pixel-art sun, halo, ridges, floor and converging grid lines, upscaled without smoothing.
+    // I upscale the pixel-art sun, halo, ridges, floor, and converging grid lines without smoothing.
     const float s = static_cast<float>(scale_);
     const auto dest = D2D1::RectF(0, 0, static_cast<float>(layout_.width) * s, static_cast<float>(layout_.height) * s);
     static_cast<ID2D1RenderTarget*>(context_.Get())->DrawBitmap(backdropLayer_.Get(), &dest, 1, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
     if (settings_.backdrop == 1) return;
-    // Scrolling grid rows snap to whole base pixels, so they step toward the viewer like sprite pixels.
+    // I snap scrolling grid rows to whole base pixels so my grid and sprite pixels move consistently.
     const double gridRate = settings_.gridSpeed == 0 ? 0 : settings_.gridSpeed == 1 ? 0.045 : 0.12;
     const float phase = static_cast<float>(std::fmod(elapsed * gridRate, 1.0));
     ScrollingGridRows(layout_, phase, settings_.palette, gridRows_);
@@ -222,7 +222,7 @@ void Renderer::DrawFlyers(float delta) {
         flyer.x -= speed * flyer.speed * delta;
         flyer.y += speed * flyer.speed * 0.48f * delta;
         if (flyer.x < -size || flyer.y > h + size) {
-            // Incoming flux is proportional to the edge lengths and velocity.
+            // I weight incoming flyers by edge length and velocity.
             if (Random(0, 1) < h / (h + w * 0.48f)) {
                 flyer.x = w + size * 0.1f;
                 flyer.y = Random(-size, h);

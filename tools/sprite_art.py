@@ -1,4 +1,4 @@
-"""Generate Toaster Squadron sprite sheets: 192x48, 4x1 frames of 48x48, RGBA."""
+"""I generate my 192x48 RGBA sprite sheets as four 48x48 frames in one row."""
 import math
 import sys
 from PIL import Image
@@ -16,7 +16,7 @@ FRECK = H("#76452F")
 CENTERS = {"light": H("#F7E4AF"), "golden": H("#E9B866"), "dark": H("#9A6541")}
 
 CELL = 48
-# wing angle per frame (degrees above horizontal): high, half down, low, half up
+# I set wing angles above horizontal: high, half down, low, half up.
 WING_ANGLES = [38, 10, -30, -6]
 
 
@@ -45,7 +45,7 @@ def wing_mask(sx, sy, side, angle, a=4.4, b=2.9, reach=5.4):
             v = -px * dy + py * dx
             if (u / a) ** 2 + (v / b) ** 2 <= 1.0:
                 m.add((x, y))
-    # short stem joining paddle to body
+    # I join my wing paddle to the body with a short stem.
     for t in range(0, int(reach) + 1):
         x = sx + dx * t
         y = sy + dy * t
@@ -59,13 +59,13 @@ def draw_wing(px, sx, sy, side, angle):
     for p in outline(m):
         px[p] = OUT
     for (x, y) in m:
-        # lower edge of paddle gets chrome-body shade; front-left wing brighter
+        # I shade the lower paddle edge with chrome and brighten the front-left wing.
         below = (x, y + 1) not in m or (x, y + 2) not in m
         if below:
             px[(x, y)] = CBODY if side < 0 else CSH
         else:
             px[(x, y)] = CHI
-    # little highlight on upper-left of left wing
+    # I add a small highlight to the upper-left of my left wing.
     if side < 0:
         hx, hy = int(cx) - 1, int(cy) - 1
         if (hx, hy) in m:
@@ -97,7 +97,7 @@ def disc(cx, cy, r):
 def toaster_frame(angle):
     img = Image.new("RGBA", (CELL, CELL), (0, 0, 0, 0))
     px = {}
-    # wings behind body
+    # I draw my wings behind the body.
     draw_wing(px, 13, 23, -1, angle)
     draw_wing(px, 34, 23, +1, angle)
 
@@ -113,21 +113,21 @@ def toaster_frame(angle):
         if y <= 21:  # top face catches light
             c = CHI if x < 31 else CBODY
         px[(x, y)] = c
-    # side-panel seam
+    # I draw my side-panel seam.
     for y in range(20, 33):
         px[(30, y)] = CSH if y > 21 else CBODY
-    # two short slots on top face
+    # I draw two short slots on my top face.
     for x in range(17, 22):
         px[(x, 20)] = OUT
     for x in range(24, 29):
         px[(x, 20)] = OUT
     for x in range(14, 31):
         px[(x, 22)] = CBODY if x > 15 else CHI
-    # cyan glint, front-left
+    # I add my cyan glint at the front-left.
     for p in [(16, 21), (16, 22), (16, 23), (17, 21)]:
         px[p] = CYAN
     px[(16, 25)] = CYAN
-    # eyes (2x2) and a small smile
+    # I draw my 2x2 eyes and small smile.
     for (ex, ey) in [(19, 24), (25, 24)]:
         for dx in (0, 1):
             for dy in (0, 1):
@@ -139,7 +139,7 @@ def toaster_frame(angle):
         px[(x, 28)] = OUT
     px[(20, 27)] = OUT
     px[(25, 27)] = OUT
-    # violet dial, lower front-left
+    # I draw my violet dial at the lower front-left.
     d = disc(27.5, 31.0, 2.2)
     for p in outline(d):
         if p in body:
@@ -147,7 +147,7 @@ def toaster_frame(angle):
     for p in d:
         px[p] = VIOLET
     px[(27, 30)] = CHI
-    # coral lever on right side panel
+    # I draw my coral lever on the right side panel.
     lever = {(x, y) for x in range(31, 34) for y in range(22, 25)}
     for p in outline(lever):
         if p[0] <= 34 and p in body | outline(body):
@@ -155,7 +155,7 @@ def toaster_frame(angle):
     for p in lever:
         px[p] = CORAL
     px[(31, 22)] = CHI
-    # lever slot below
+    # I draw my lever slot below it.
     for y in range(26, 31):
         px[(32, y)] = OUT
 
@@ -167,7 +167,7 @@ def toaster_frame(angle):
 # ---------------- toast ----------------
 def toast_shape():
     m = rounded_rect(16, 21, 31, 34, 2)
-    # lopsided three-lobe cloud crown: biggest, highest lobe on the left
+    # I shape my cloud crown with three lobes, placing the largest and highest on the left.
     m |= disc(19.8, 16.0, 4.5)
     m |= disc(26.3, 15.9, 3.5)
     m |= disc(29.8, 19.2, 2.5)
@@ -199,24 +199,24 @@ def toast_frame(angle, center, freckles):
         right = dist_to_edge(x, y, 1, 0)
         up = dist_to_edge(x, y, 0, -1)
         down = dist_to_edge(x, y, 0, 1)
-        # thicker crust on right/bottom suggests 3/4 depth
+        # I thicken my right and bottom crust edges to suggest three-quarter depth.
         if left < 1 or up < 1 or right < 3 or down < 3:
             px[(x, y)] = CRUST
         else:
             px[(x, y)] = center
-    # front-left highlights on crust
+    # I highlight my crust at the front-left.
     for p in [(18, 14), (19, 13), (20, 13), (17, 15), (17, 17)]:
         if p in shape:
             px[p] = CHI
     for p in [(17, 22), (17, 23), (17, 24)]:
         px[p] = CHI
-    # eyes: tiny squares
+    # I draw my eyes as tiny squares.
     for (ex, ey) in [(20, 24), (25, 24)]:
         for dx in (0, 1):
             for dy in (0, 1):
                 px[(ex + dx, ey + dy)] = OUT
     px[(20, 24)] = CHI if center != CENTERS["light"] else OUT
-    # small open smile
+    # I draw my small open smile.
     for x in range(22, 25):
         px[(x, 28)] = OUT
     px[(21, 27)] = OUT

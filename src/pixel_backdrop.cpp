@@ -30,7 +30,7 @@ public:
     void Set(int x, int y, std::uint32_t rgb) {
         if (Inside(x, y)) px_[Index(x, y)] = 0xff000000u | rgb;
     }
-    // Source-over blend of a straight-alpha color onto premultiplied pixels.
+    // I blend a straight-alpha color over premultiplied pixels.
     void Blend(int x, int y, std::uint32_t rgb, float alpha) {
         if (!Inside(x, y)) return;
         std::uint32_t& d = px_[Index(x, y)];
@@ -44,7 +44,7 @@ public:
         out |= static_cast<std::uint32_t>(std::clamp(static_cast<int>(std::lround(a)), 0, 255)) << 24;
         d = out;
     }
-    void Span(int x0, int x1, int y, std::uint32_t rgb) {  // x1 exclusive
+    void Span(int x0, int x1, int y, std::uint32_t rgb) {  // I exclude x1.
         for (int x = std::max(0, x0); x < std::min(w_, x1); ++x) Set(x, y, rgb);
     }
     void Disc(float cx, float cy, float r, std::uint32_t rgb, float alpha, int maxRow) {
@@ -58,7 +58,7 @@ public:
             for (int x = c - half; x < c + half; ++x) Blend(x, y, rgb, alpha);
         }
     }
-    void Line(int x0, int y0, int x1, int y1, std::uint32_t rgb, float alpha) {  // Bresenham
+    void Line(int x0, int y0, int x1, int y1, std::uint32_t rgb, float alpha) {  // I use Bresenham's algorithm.
         const int dx = std::abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
         const int dy = -std::abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
         int err = dx + dy;
@@ -86,7 +86,7 @@ void DrawSun(Canvas& canvas, const BackdropLayout& l, bool clipAtHorizon) {
     const float cy = std::floor(static_cast<float>(l.horizon) - r * 0.72f) + 0.5f;
     const int maxRow = clipAtHorizon ? l.horizon : l.height;
 
-    // Stepped halo: hard-edged rings, no smooth glow.
+    // I build my stepped halo from hard-edged rings without smooth glow.
     canvas.Disc(cx, cy, r + 10, Halo, 0.06f, maxRow);
     canvas.Disc(cx, cy, r + 6, Halo, 0.08f, maxRow);
     canvas.Disc(cx, cy, r + 3, Halo, 0.11f, maxRow);
@@ -105,7 +105,7 @@ void DrawSun(Canvas& canvas, const BackdropLayout& l, bool clipAtHorizon) {
         const float dy = static_cast<float>(y) + 0.5f - cy;
         if (std::fabs(dy) > r) continue;
         const int b = band[static_cast<size_t>(i)];
-        // Dark cuts widen toward the base: 1,1,1,2,2,2,3,3 rows for bands 4..11.
+        // I widen dark cuts toward the base: 1,1,1,2,2,2,3,3 rows for bands 4..11.
         if (b >= 4) {
             int left = 0;
             while (i + left + 1 < rows && band[static_cast<size_t>(i + left + 1)] == b) ++left;
@@ -118,7 +118,7 @@ void DrawSun(Canvas& canvas, const BackdropLayout& l, bool clipAtHorizon) {
         const int prev = i > 0 ? band[static_cast<size_t>(i - 1)] : b;
         for (int x = c - half; x < c + half; ++x) {
             std::uint32_t col = BandColor(b);
-            // Two-row checkerboard dither where the colors change (yellow->orange, orange->pink).
+            // I dither color changes across two checkerboard rows (yellow->orange, orange->pink).
             if (((x + y) & 1) != 0) {
                 if (BandColor(next) != col) col = BandColor(next);
                 else if (BandColor(prev) != col) col = BandColor(prev);
@@ -156,7 +156,7 @@ void DrawFloor(Canvas& canvas, const BackdropLayout& l, int palette) {
             canvas.Span(x0, x1, y, line);
         }
     }
-    // Horizon line.
+    // I draw my horizon line.
     canvas.Span(0, l.width, l.horizon, palette == 1 ? SunMid : SunLow);
 }
 } // namespace
@@ -186,14 +186,14 @@ void ScrollingGridRows(const BackdropLayout& l, float phase, int palette, std::v
     constexpr int Count = 18;
     const std::uint32_t accent = GridAccent(palette);
     out.clear();
-    // Pass 0 emits glow rows, pass 1 the bright rows, so bright rows draw last.
+    // I emit glow rows in pass 0 and bright rows in pass 1 to draw bright rows last.
     for (int pass = 0; pass < 2; ++pass) {
         for (int i = 0; i < Count; ++i) {
             const float depth = std::fmod(static_cast<float>(i) / Count + phase, 1.0f);
             const int y = l.horizon + static_cast<int>(std::floor(static_cast<float>(l.height - l.horizon) * std::pow(depth, 2.8f)));
             if (y <= l.horizon || y >= l.height) continue;
             if (pass == 1) {
-                // Three stepped brightness levels instead of a smooth fade.
+                // I use three stepped brightness levels.
                 const float alpha = depth < 0.35f ? 0.35f : depth < 0.7f ? 0.6f : 0.85f;
                 out.push_back({y, accent, alpha});
             } else if (depth >= 0.7f) {

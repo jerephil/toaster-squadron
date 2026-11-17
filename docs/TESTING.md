@@ -1,8 +1,8 @@
 # Windows 11 PC acceptance
 
-Jeremy reported successful Windows 11 testing and approved stable v0.1.0 on November 17, 2026. The stable release preserves the exact executable tested in `test-0.1.0-rc.1`; its SHA-256 is `3c5fd5d844d2f81295b8cff90097a396c7366c2dd71875c114e8767d851e39e3`.
+I completed Windows 11 testing successfully and approved stable v0.1.0 on November 17, 2026. My stable release preserves the exact executable I tested in `test-0.1.0-rc.1`; its SHA-256 is `3c5fd5d844d2f81295b8cff90097a396c7366c2dd71875c114e8767d851e39e3`.
 
-CI verifies the MSVC build and automated window contracts on a GitHub-hosted Windows runner. Keep the following checklist for regression testing future versions and hardware configurations.
+I use CI to verify the MSVC build and automated window contracts on a GitHub-hosted Windows runner. I keep the following checklist for regression testing future versions and hardware configurations.
 
 1. Download and extract the [stable Windows x64 package](https://github.com/jerephil/toaster-squadron/releases/download/v0.1.0/ToasterSquadron-windows-x64.zip), or use an artifact from a green [development build](https://github.com/jerephil/toaster-squadron/actions/workflows/build.yml). The zip contains `ToasterSquadron.scr` at its top level, beside `assets/`, `docs/`, `README.md`, `LICENSE`, and `SHA256SUMS.txt`. Extract once; there is no `dist/` folder or nested zip. From the extracted folder, the exact Windows path is `.\ToasterSquadron.scr`. It is standalone: all four sheets and the icon are embedded. Verify its SHA-256 against `.\SHA256SUMS.txt` with `Get-FileHash .\ToasterSquadron.scr -Algorithm SHA256` if desired. This is an unsigned executable; Windows may show SmartScreen when opening an internet download.
 2. Run the `.scr` with no arguments and with `/c`. Change every setting, save, reopen, and confirm the choices persist. Cancel should discard edits. Check keyboard navigation, labels, and visibility at 100%, 150%, and 200% display scaling.
@@ -12,7 +12,7 @@ CI verifies the MSVC build and automated window contracts on a GitHub-hosted Win
 6. On separate starts, exit by key, left/right/middle click, and mouse movement. The first 1.2 seconds of mouse jitter are ignored, then displacement over 8 physical pixels from the settled anchor exits. Tiny repeated movements must eventually exceed the anchor threshold. Cursor visibility should restore on exit.
 7. Let the saver run for at least two hours. In Task Manager, inspect CPU, GPU, private memory, and handle counts at the start and end. Initial driver/cache warm-up can increase memory; continuing growth warrants investigation. Try lock/unlock, display sleep/wake, and monitor hotplug. Hotplug exits so Windows can relaunch with fresh monitor bounds. GPU device loss is handled by rebuilding the rendering resources; unrecoverable errors exit with status 2.
 8. For art replacement, copy the four matching sheets into `assets/` beside the `.scr`, or replace the repo sheets and rebuild. Test transparent edges and all flap poses. Incorrect dimensions or broken PNGs must fall back to the embedded sheet. Remove the external folder to restore embedded art.
-9. The README includes an actual screenshot captured from the running CI build. Capture a preferred Windows 11 screenshot/GIF if desired, and send any visual/performance issues. Record results and approve future stable releases only after the relevant regression checks are satisfactory. The v0.1.0 approval has been given.
+9. The README includes an actual screenshot captured from the running CI build. Capture a preferred Windows 11 screenshot/GIF if desired, and send any visual/performance issues. Record results and approve future stable releases only after the relevant regression checks are satisfactory. I have approved v0.1.0.
 
 ## CI scope and architecture
 
