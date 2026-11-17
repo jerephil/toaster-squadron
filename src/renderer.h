@@ -1,4 +1,5 @@
 #pragma once
+#include "pixel_backdrop.h"
 #include "settings.h"
 #include <d2d1_1.h>
 #include <d3d11.h>
@@ -36,9 +37,13 @@ private:
     ComPtr<ID2D1Bitmap1> target_;
     ComPtr<ID2D1SolidColorBrush> brush_;
     ComPtr<ID2D1LinearGradientBrush> sky_;
+    ComPtr<ID2D1Bitmap> backdropLayer_;  // pixel-art sun, ridges, grid floor at base scale
+    BackdropLayout layout_;
+    std::vector<GridRow> gridRows_;  // reused every frame
     ComPtr<IWICImagingFactory> wic_;
     std::array<ComPtr<ID2D1Bitmap>, 4> sprites_;
     HRESULT Resize();
+    HRESULT BuildBackdrop();
     HRESULT LoadSprite(const wchar_t* filename, int resource, ID2D1Bitmap** result);
     HRESULT Decode(IWICBitmapDecoder* decoder, ID2D1Bitmap** result);
     void ResetFlyers();
