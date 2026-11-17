@@ -154,8 +154,9 @@ HRESULT Renderer::BuildBackdrop() {
     backdropLayer_.Reset();
     if (settings_.backdrop == 2) return S_OK;
     // Same base scale as the 48x48 sprites, so backdrop pixels and sprite pixels match in size.
-    const int baseW = static_cast<int>((width_ + scale_ - 1) / scale_);
-    const int baseH = static_cast<int>((height_ + scale_ - 1) / scale_);
+    const auto pixelScale = static_cast<UINT>(scale_);
+    const int baseW = static_cast<int>((width_ + pixelScale - 1) / pixelScale);
+    const int baseH = static_cast<int>((height_ + pixelScale - 1) / pixelScale);
     layout_ = MakeBackdropLayout(baseW, baseH);
     gridRows_.reserve(18 * 3);
     const auto pixels = RasterizeBackdrop(layout_, settings_.backdrop, settings_.palette);
@@ -200,7 +201,7 @@ void Renderer::Backdrop(double elapsed) {
     if (settings_.backdrop == 2 || !backdropLayer_) return;
     // Pixel-art sun, halo, ridges, floor and converging grid lines, upscaled without smoothing.
     const float s = static_cast<float>(scale_);
-    const auto dest = D2D1::RectF(0, 0, layout_.width * s, layout_.height * s);
+    const auto dest = D2D1::RectF(0, 0, static_cast<float>(layout_.width) * s, static_cast<float>(layout_.height) * s);
     static_cast<ID2D1RenderTarget*>(context_.Get())->DrawBitmap(backdropLayer_.Get(), &dest, 1, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
     if (settings_.backdrop == 1) return;
     // Scrolling grid rows snap to whole base pixels, so they step toward the viewer like sprite pixels.
@@ -208,7 +209,7 @@ void Renderer::Backdrop(double elapsed) {
     const float phase = static_cast<float>(std::fmod(elapsed * gridRate, 1.0));
     ScrollingGridRows(layout_, phase, settings_.palette, gridRows_);
     for (const auto& row : gridRows_) {
-        Rect(0, row.y * s, w, (row.y + 1) * s, Color(row.rgb, row.alpha));
+        Rect(0, static_cast<float>(row.y) * s, w, static_cast<float>(row.y + 1) * s, Color(row.rgb, row.alpha));
     }
 }
 void Renderer::DrawFlyers(float delta) {

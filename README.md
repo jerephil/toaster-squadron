@@ -4,9 +4,9 @@ My personal, free Windows 11 screensaver: original chunky pixel-art winged toast
 
 **Early build — awaiting my Windows 11 PC test.** [The art brief](docs/ART-BRIEF.md) defines my sprite sheets and palette.
 
-![My running Toaster Squadron build with original placeholder sprites over the synthwave backdrop](docs/screenshot.png)
+![My running Toaster Squadron build with Claude Design sprites over the pixel-art synthwave backdrop](docs/screenshot.png)
 
-Screenshot from my running CI build on a GitHub-hosted Windows desktop, using the original placeholder art.
+Screenshot from my running CI build on a GitHub-hosted Windows desktop, using the Claude Design sprite sheets and pixel-art sun, ridges, and grid.
 
 Toaster Squadron is an independent, original project and is not affiliated with or endorsed by Berkeley Systems or the makers of After Dark.
 
@@ -42,4 +42,4 @@ The Windows CI job builds with MSVC and exercises the settings dialog, live chil
 
 ## Art and license
 
-I plan to have Claude Design create the final graphics using my [paste-ready art brief](docs/ART-BRIEF.md). The current original, code-generated sprites remain placeholders. The brief specifies four PNG sheets that drop into `assets/` without code changes. MIT licensed, copyright Jeremy W. Phillips; see [LICENSE](LICENSE).
+My new sprite sheets came from Claude Design, following the [art brief](docs/ART-BRIEF.md). The sun, ridges, and grid now use matching chunky pixels. The four PNG sheets can be replaced in `assets/` without code changes. Do not run `tools/generate_assets.py`: it would overwrite the new art with the old placeholders. MIT licensed, copyright Jeremy W. Phillips; see [LICENSE](LICENSE).

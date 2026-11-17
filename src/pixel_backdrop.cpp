@@ -18,7 +18,7 @@ int Channel(std::uint32_t c, int shift) { return static_cast<int>((c >> shift) &
 std::uint32_t Mix(std::uint32_t over, std::uint32_t under, float alpha) {
     std::uint32_t out = 0;
     for (int shift = 0; shift <= 16; shift += 8) {
-        const float v = Channel(over, shift) * alpha + Channel(under, shift) * (1 - alpha);
+        const float v = static_cast<float>(Channel(over, shift)) * alpha + static_cast<float>(Channel(under, shift)) * (1 - alpha);
         out |= static_cast<std::uint32_t>(std::clamp(static_cast<int>(std::lround(v)), 0, 255)) << shift;
     }
     return out;
@@ -37,10 +37,10 @@ public:
         const float inv = 1 - alpha;
         std::uint32_t out = 0;
         for (int shift = 0; shift <= 16; shift += 8) {
-            const float v = Channel(rgb, shift) * alpha + Channel(d, shift) * inv;
+            const float v = static_cast<float>(Channel(rgb, shift)) * alpha + static_cast<float>(Channel(d, shift)) * inv;
             out |= static_cast<std::uint32_t>(std::clamp(static_cast<int>(std::lround(v)), 0, 255)) << shift;
         }
-        const float a = 255 * alpha + Channel(d, 24) * inv;
+        const float a = 255 * alpha + static_cast<float>(Channel(d, 24)) * inv;
         out |= static_cast<std::uint32_t>(std::clamp(static_cast<int>(std::lround(a)), 0, 255)) << 24;
         d = out;
     }
@@ -51,7 +51,7 @@ public:
         const int top = static_cast<int>(std::floor(cy - r));
         const int bottom = std::min(maxRow, static_cast<int>(std::ceil(cy + r)));
         for (int y = top; y < bottom; ++y) {
-            const float dy = y + 0.5f - cy;
+            const float dy = static_cast<float>(y) + 0.5f - cy;
             if (std::fabs(dy) > r) continue;
             const int half = static_cast<int>(std::lround(std::sqrt(r * r - dy * dy)));
             const int c = static_cast<int>(std::lround(cx));
@@ -81,9 +81,9 @@ private:
 std::uint32_t BandColor(int band) { return band < 4 ? SunTop : band < 8 ? SunMid : SunLow; }
 
 void DrawSun(Canvas& canvas, const BackdropLayout& l, bool clipAtHorizon) {
-    const float r = std::min(l.width * 0.19f, l.height * 0.23f);
-    const float cx = std::floor(l.width * 0.5f);
-    const float cy = std::floor(l.horizon - r * 0.72f) + 0.5f;
+    const float r = std::min(static_cast<float>(l.width) * 0.19f, static_cast<float>(l.height) * 0.23f);
+    const float cx = std::floor(static_cast<float>(l.width) * 0.5f);
+    const float cy = std::floor(static_cast<float>(l.horizon) - r * 0.72f) + 0.5f;
     const int maxRow = clipAtHorizon ? l.horizon : l.height;
 
     // Stepped halo: hard-edged rings, no smooth glow.
@@ -96,13 +96,13 @@ void DrawSun(Canvas& canvas, const BackdropLayout& l, bool clipAtHorizon) {
     const int rows = bottom - top;
     std::vector<int> band(static_cast<size_t>(rows));
     for (int i = 0; i < rows; ++i) {
-        const float t = (top + i + 0.5f - (cy - r)) / (2 * r);
+        const float t = (static_cast<float>(top + i) + 0.5f - (cy - r)) / (2 * r);
         band[static_cast<size_t>(i)] = std::clamp(static_cast<int>(t * SunBands), 0, SunBands - 1);
     }
     for (int i = 0; i < rows; ++i) {
         const int y = top + i;
         if (y >= maxRow) break;
-        const float dy = y + 0.5f - cy;
+        const float dy = static_cast<float>(y) + 0.5f - cy;
         if (std::fabs(dy) > r) continue;
         const int b = band[static_cast<size_t>(i)];
         // Dark cuts widen toward the base: 1,1,1,2,2,2,3,3 rows for bands 4..11.
@@ -131,10 +131,10 @@ void DrawSun(Canvas& canvas, const BackdropLayout& l, bool clipAtHorizon) {
 void DrawRidges(Canvas& canvas, const BackdropLayout& l) {
     const float w = static_cast<float>(l.width), h = static_cast<float>(l.height);
     for (int i = -1; i < 11; ++i) {
-        const float x = w * i / 10, next = x + w / 10;
-        const float s = std::sin(i * 2.7f);
+        const float x = w * static_cast<float>(i) / 10, next = x + w / 10;
+        const float s = std::sin(static_cast<float>(i) * 2.7f);
         const int peakX = static_cast<int>(std::lround(x + w * 0.046f));
-        const int peakY = static_cast<int>(std::lround(l.horizon - h * (0.035f + 0.025f * s * s)));
+        const int peakY = static_cast<int>(std::lround(static_cast<float>(l.horizon) - h * (0.035f + 0.025f * s * s)));
         canvas.Line(static_cast<int>(std::lround(x)), l.horizon, peakX, peakY, Ridge, 0.55f);
         canvas.Line(peakX, peakY, static_cast<int>(std::lround(next)), l.horizon, Ridge, 0.55f);
         canvas.Line(peakX, peakY, static_cast<int>(std::lround(x + w * 0.065f)), l.horizon, Ridge, 0.3f);
@@ -144,13 +144,13 @@ void DrawRidges(Canvas& canvas, const BackdropLayout& l) {
 void DrawFloor(Canvas& canvas, const BackdropLayout& l, int palette) {
     for (int y = l.horizon; y < l.height; ++y) canvas.Span(0, l.width, y, Floor);
     const std::uint32_t line = Mix(GridAccent(palette), Floor, 0.7f);
-    const float cx = std::floor(l.width * 0.5f);
+    const float cx = std::floor(static_cast<float>(l.width) * 0.5f);
     const float depth = static_cast<float>(l.height - l.horizon);
     for (int i = -10; i <= 10; ++i) {
-        const float bottomX = cx + i * l.width * 0.16f;
+        const float bottomX = cx + static_cast<float>(i) * static_cast<float>(l.width) * 0.16f;
         for (int y = l.horizon + 1; y < l.height; ++y) {
-            const float a = cx + (bottomX - cx) * (y - l.horizon) / depth;
-            const float b = cx + (bottomX - cx) * (y + 1 - l.horizon) / depth;
+            const float a = cx + (bottomX - cx) * static_cast<float>(y - l.horizon) / depth;
+            const float b = cx + (bottomX - cx) * static_cast<float>(y + 1 - l.horizon) / depth;
             const int x0 = static_cast<int>(std::floor(std::min(a, b)));
             const int x1 = std::max(x0 + 1, static_cast<int>(std::floor(std::max(a, b))));
             canvas.Span(x0, x1, y, line);
@@ -167,7 +167,7 @@ BackdropLayout MakeBackdropLayout(int width, int height) {
     BackdropLayout l;
     l.width = std::max(1, width);
     l.height = std::max(1, height);
-    l.horizon = std::clamp(static_cast<int>(std::lround(l.height * 0.64f)), 0, l.height - 1);
+    l.horizon = std::clamp(static_cast<int>(std::lround(static_cast<float>(l.height) * 0.64f)), 0, l.height - 1);
     return l;
 }
 
@@ -190,7 +190,7 @@ void ScrollingGridRows(const BackdropLayout& l, float phase, int palette, std::v
     for (int pass = 0; pass < 2; ++pass) {
         for (int i = 0; i < Count; ++i) {
             const float depth = std::fmod(static_cast<float>(i) / Count + phase, 1.0f);
-            const int y = l.horizon + static_cast<int>(std::floor((l.height - l.horizon) * std::pow(depth, 2.8f)));
+            const int y = l.horizon + static_cast<int>(std::floor(static_cast<float>(l.height - l.horizon) * std::pow(depth, 2.8f)));
             if (y <= l.horizon || y >= l.height) continue;
             if (pass == 1) {
                 // Three stepped brightness levels instead of a smooth fade.
