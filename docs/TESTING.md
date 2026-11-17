@@ -1,0 +1,22 @@
+# Windows 11 PC acceptance
+
+CI proves the MSVC build and automated window contracts on a GitHub-hosted Windows runner. These checks still need a real Windows 11 desktop and Jeremy's eyes before a version tag or Release.
+
+1. Download and extract the artifact from a green [Windows build](https://github.com/jerephil/toaster-squadron/actions/workflows/build.yml). `dist/ToasterSquadron.scr` is standalone: all four sheets and the icon are embedded. Verify its SHA-256 against `dist/SHA256SUMS.txt` with `Get-FileHash` if desired. This is an unsigned executable; Windows may show SmartScreen when opening an internet download.
+2. Run the `.scr` with no arguments and with `/c`. Change every setting, save, reopen, and confirm the choices persist. Cancel should discard edits. Check keyboard navigation, labels, and visibility at 100%, 150%, and 200% display scaling.
+3. Right-click → Install. In Screen Saver Settings, confirm the live preview renders within the small monitor box. Switch away and back, change preview size if possible, and close settings. The preview must never seize focus, hide the cursor, or exit just because the mouse moves.
+4. Use the Preview button or run `.\ToasterSquadron.scr /s`. Every connected monitor should fill completely, including monitors left of or above the primary. Try different monitor resolutions, refresh rates, and DPI scales. The pointer must disappear. Toasters and toast move from the upper right toward the lower left, flap, and stay crisp at integer scales; an occasional toaster rolls.
+5. Check all three doneness variants, 0%/100% toast, 5/40 flyers, all speeds and backgrounds, grid stopped/slow/fast, and both palettes. The sun must have stripes; the grid advances toward the viewer. There is no audio.
+6. On separate starts, exit by key, left/right/middle click, and mouse movement. The first 1.2 seconds of mouse jitter are ignored, then displacement over 8 physical pixels from the settled anchor exits. Tiny repeated movements must eventually exceed the anchor threshold. Cursor visibility should restore on exit.
+7. Let the saver run for at least two hours. In Task Manager, inspect CPU, GPU, private memory, and handle counts at the start and end. Initial driver/cache warm-up can increase memory; continuing growth warrants investigation. Try lock/unlock, display sleep/wake, and monitor hotplug. Hotplug exits so Windows can relaunch with fresh monitor bounds. GPU device loss is handled by rebuilding the rendering resources; unrecoverable errors exit with status 2.
+8. For art replacement, copy the four matching sheets into `assets/` beside the `.scr`, or replace the repo sheets and rebuild. Test transparent edges and all flap poses. Incorrect dimensions or broken PNGs must fall back to the embedded sheet. Remove the external folder to restore embedded art.
+9. Capture an actual running screenshot/GIF for the README, and send any visual/performance issues. Explicitly approve publishing only after this checklist is satisfactory. Do not create `v0.1.0` before that approval.
+
+## CI scope and architecture
+
+- C++20, static MSVC CRT, x64 Windows SDK libraries; no installer dependencies.
+- One borderless topmost window and Direct2D/DXGI flip swap chain per monitor. The manifest requests PerMonitorV2; render coordinates and sprite scales use physical pixels.
+- Hardware D3D11 with WARP fallback, nearest-neighbor PNG rendering through WIC, procedural backdrop, a 60 fps timer cap, and primary-output vblank pacing. Desktop composition presents secondary outputs without waiting serially for each monitor. Refresh cadence still needs visual checking on heterogeneous hardware.
+- Fixed-size flyer/star populations; COM objects use scoped ownership. No render-frame COM allocations during normal drawing. Resize/device-loss rebuilds resources.
+- User settings use validated DWORD values under `HKCU\Software\ToasterSquadron`. Delete that key to restore defaults. Remove the installed `.scr` to uninstall.
+- The workflow publishes artifacts for branch/PR builds. The Release job runs only for a deliberately pushed `v*` tag; no tag has been authorized yet.

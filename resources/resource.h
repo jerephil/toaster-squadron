@@ -1,0 +1,16 @@
+#pragma once
+#define IDI_TOASTER 101
+#define IDD_SETTINGS 102
+#define IDB_TOASTER 201
+#define IDB_LIGHT 202
+#define IDB_GOLDEN 203
+#define IDB_DARK 204
+#define IDC_FLYERS 1001
+#define IDC_FLYERS_VALUE 1002
+#define IDC_SPEED 1003
+#define IDC_RATIO 1004
+#define IDC_RATIO_VALUE 1005
+#define IDC_DONENESS 1006
+#define IDC_BACKDROP 1007
+#define IDC_GRID 1008
+#define IDC_PALETTE 1009

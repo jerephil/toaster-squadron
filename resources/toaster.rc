@@ -1,0 +1,62 @@
+#include <windows.h>
+#include "resource.h"
+IDI_TOASTER ICON "resources/toaster.ico"
+IDB_TOASTER RCDATA "assets/toaster.png"
+IDB_LIGHT RCDATA "assets/toast-light.png"
+IDB_GOLDEN RCDATA "assets/toast-golden.png"
+IDB_DARK RCDATA "assets/toast-dark.png"
+
+IDD_SETTINGS DIALOGEX 0, 0, 292, 263
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Toaster Squadron Settings"
+FONT 9, "Segoe UI"
+BEGIN
+    ICON IDI_TOASTER, -1, 12, 12, 22, 22
+    LTEXT "Your squadron. Your slice of the sky.", -1, 44, 17, 230, 12
+    LTEXT "Number of flyers", -1, 12, 47, 95, 12
+    CONTROL "", IDC_FLYERS, "msctls_trackbar32", WS_TABSTOP | TBS_AUTOTICKS, 110, 41, 132, 24
+    LTEXT "15", IDC_FLYERS_VALUE, 250, 47, 28, 12
+    LTEXT "Flight speed", -1, 12, 75, 95, 12
+    COMBOBOX IDC_SPEED, 112, 71, 164, 60, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT "Toast ratio", -1, 12, 104, 95, 12
+    CONTROL "", IDC_RATIO, "msctls_trackbar32", WS_TABSTOP | TBS_AUTOTICKS, 110, 97, 132, 24
+    LTEXT "30%", IDC_RATIO_VALUE, 246, 104, 34, 12
+    LTEXT "Toast doneness", -1, 12, 131, 95, 12
+    COMBOBOX IDC_DONENESS, 112, 127, 164, 60, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT "Backdrop", -1, 12, 158, 95, 12
+    COMBOBOX IDC_BACKDROP, 112, 154, 164, 60, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT "Grid scroll speed", -1, 12, 185, 95, 12
+    COMBOBOX IDC_GRID, 112, 181, 164, 60, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT "Palette", -1, 12, 212, 95, 12
+    COMBOBOX IDC_PALETTE, 112, 208, 164, 60, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON "Save", IDOK, 164, 240, 54, 14
+    PUSHBUTTON "Cancel", IDCANCEL, 224, 240, 54, 14
+END
+
+1 VERSIONINFO
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "Jeremy W. Phillips\0"
+            VALUE "FileDescription", "Toaster Squadron Screensaver\0"
+            VALUE "FileVersion", "0.1.0\0"
+            VALUE "InternalName", "ToasterSquadron\0"
+            VALUE "LegalCopyright", "Copyright (c) 2026 Jeremy W. Phillips\0"
+            VALUE "OriginalFilename", "ToasterSquadron.scr\0"
+            VALUE "ProductName", "Toaster Squadron\0"
+            VALUE "ProductVersion", "0.1.0\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
