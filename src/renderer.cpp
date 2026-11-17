@@ -249,14 +249,14 @@ void Renderer::DrawFlyers(float delta) {
         }
         float rotation = 0;
         if (!flyer.toast && animationTime_ >= flyer.rollAt) {
-            const float progress = (animationTime_ - flyer.rollAt) / 1.4f;
+            const float progress = static_cast<float>((animationTime_ - flyer.rollAt) / 1.4);
             if (progress < 1) rotation = 360 * (progress - std::sin(progress * 2 * Pi) / (2 * Pi));
             else flyer.rollAt = animationTime_ + Random(35, 100);
         }
         const float x = std::floor(flyer.x), y = std::floor(flyer.y);
         const auto center = D2D1::Point2F(x + size / 2, y + size / 2);
         context_->SetTransform(D2D1::Matrix3x2F::Rotation(rotation, center));
-        const int frame = static_cast<int>(std::fmod((animationTime_ + flyer.phase) / 0.14f, 4.0f));
+        const int frame = static_cast<int>(std::fmod((animationTime_ + flyer.phase) / 0.14, 4.0));
         const int sheet = flyer.toast ? settings_.doneness + 1 : 0;
         const auto source = D2D1::RectF(static_cast<float>(frame * 48), 0, static_cast<float>((frame + 1) * 48), 48);
         const auto dest = D2D1::RectF(x, y, x + size, y + size);

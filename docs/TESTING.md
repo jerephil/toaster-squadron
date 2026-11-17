@@ -16,7 +16,7 @@ CI proves the MSVC build and automated window contracts on a GitHub-hosted Windo
 
 - C++20, static MSVC CRT, x64 Windows SDK libraries; no installer dependencies.
 - One borderless topmost window and Direct2D/DXGI flip swap chain per monitor. The manifest requests PerMonitorV2; render coordinates and sprite scales use physical pixels.
-- Hardware D3D11 with WARP fallback, nearest-neighbor PNG rendering through WIC, procedural backdrop, a 60 fps timer cap, and primary-output vblank pacing. Desktop composition presents secondary outputs without waiting serially for each monitor. Refresh cadence still needs visual checking on heterogeneous hardware.
+- Hardware D3D11 with WARP fallback, nearest-neighbor PNG rendering through WIC, procedural backdrop, a high-resolution 60 fps timer cap, and primary-output vblank pacing. Desktop composition presents secondary outputs without waiting serially for each monitor. Refresh cadence still needs visual checking on heterogeneous hardware.
 - Fixed-size flyer/star populations; COM objects use scoped ownership. No render-frame COM allocations during normal drawing. Resize/device-loss rebuilds resources.
 - User settings use validated DWORD values under `HKCU\Software\ToasterSquadron`. Delete that key to restore defaults. Remove the installed `.scr` to uninstall.
 - The workflow publishes artifacts for branch/PR builds. The Release job runs only for a deliberately pushed `v*` tag; no tag has been authorized yet.
