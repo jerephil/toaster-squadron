@@ -71,7 +71,7 @@ The procedural scene behind the sprites uses deep blue `#090D27`, purple `#40135
 
 Replace the four files in the repo's `assets/` directory and rebuild to embed the Claude Design art in the standalone `.scr`. **No C++ or resource-file change is needed.** For immediate testing without rebuilding, replace the four matching PNGs in the `assets/` folder beside `ToasterSquadron.scr` in the extracted artifact. The loader reads that folder relative to the executable, not the current working directory; valid external sheets override embedded art one at a time. Missing, unreadable, or incorrectly sized sheets fall back to the embedded placeholders.
 
-Before delivery, verify all four PNGs are 192 × 48 RGBA images, all 16 frame cells have the intended pose and anchored bodies, and every transparent edge stays crisp. Test against both the dark sky and bright sun, including small preview rendering and all toast doneness settings. Do not run the placeholder generator over the replacement art. No tag or Release is authorized by this art handoff.
+Before delivery, verify all four PNGs are 192 × 48 RGBA images, all 16 frame cells have the intended pose and anchored bodies, and every transparent edge stays crisp. Test against both the dark sky and bright sun, including small preview rendering and all toast doneness settings. Do not run the placeholder generator over the replacement art. Release approval and acceptance status are tracked in [TESTING.md](TESTING.md).
 
 ## Paste into Claude Design
 

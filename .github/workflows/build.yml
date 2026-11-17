@@ -35,7 +35,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Path dist | Out-Null
           Copy-Item build/Release/ToasterSquadron.scr dist/
-          Copy-Item README.md,LICENSE dist/
+          Copy-Item README.md,LICENSE,CHANGELOG.md dist/
           Copy-Item docs dist/docs -Recurse
           Copy-Item assets dist/assets -Recurse
           if (Test-Path screenshot.png) { Copy-Item screenshot.png dist/docs/screenshot.png }
@@ -69,5 +69,12 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
+          $existing = gh release view $env:RELEASE_TAG --json isDraft 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            $published = $existing | ConvertFrom-Json
+            if ($published.isDraft) { throw "A draft already exists for $env:RELEASE_TAG; publish it explicitly." }
+            Write-Host "Preserving the published release and its approved assets: $env:RELEASE_TAG"
+            exit 0
+          }
           Compress-Archive -Path release-artifact/* -DestinationPath ToasterSquadron-windows-x64.zip
           gh release create $env:RELEASE_TAG release-artifact/ToasterSquadron.scr ToasterSquadron-windows-x64.zip release-artifact/SHA256SUMS.txt --verify-tag --title "Toaster Squadron $env:RELEASE_TAG" --generate-notes
