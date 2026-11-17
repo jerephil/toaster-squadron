@@ -12,7 +12,7 @@ Toaster Squadron is an independent, original project and is not affiliated with 
 
 ## Install and test
 
-Open a green [GitHub Actions build](https://github.com/jerephil/toaster-squadron/actions/workflows/build.yml), download the `ToasterSquadron-windows-x64` artifact (GitHub sign-in required), and extract it. The standalone `ToasterSquadron.scr` is inside `dist/`; a ready-to-share zip is included too. Right-click it → **Install**, then use Windows Screen Saver Settings to preview and configure it. Alternatively copy it to `C:\Windows\System32` (administrator permission required). An unsigned download may trigger SmartScreen; inspect and build the source yourself if preferred.
+Open a green [GitHub Actions build](https://github.com/jerephil/toaster-squadron/actions/workflows/build.yml), download the `ToasterSquadron-windows-x64` artifact (GitHub sign-in required), and extract it. The extracted folder contains `ToasterSquadron.scr` at its top level, beside `assets/`, `docs/`, `README.md`, `LICENSE`, and `SHA256SUMS.txt`. From that folder, the exact Windows path is `.\ToasterSquadron.scr`; there is no `dist/` folder or second zip to open. Right-click it → **Install**, then use Windows Screen Saver Settings to preview and configure it. Alternatively copy it to `C:\Windows\System32` (administrator permission required). An unsigned download may trigger SmartScreen; inspect and build the source yourself if preferred.
 
 - `ToasterSquadron.scr /s`: full screen on every monitor; exits on keyboard, click, or deliberate mouse movement.
 - `ToasterSquadron.scr /p <HWND>`: live child preview for Windows Screen Saver Settings.
@@ -42,4 +42,4 @@ The Windows CI job builds with MSVC and exercises the settings dialog, live chil
 
 ## Art and license
 
-See [docs/ART-BRIEF.md](docs/ART-BRIEF.md) for the swappable PNG contract. I use original art throughout; the initial sprites are code-generated placeholders. MIT licensed, copyright Jeremy W. Phillips; see [LICENSE](LICENSE).
+I plan to have Claude Design create the final graphics using my [paste-ready art brief](docs/ART-BRIEF.md). The current original, code-generated sprites remain placeholders. The brief specifies four PNG sheets that drop into `assets/` without code changes. MIT licensed, copyright Jeremy W. Phillips; see [LICENSE](LICENSE).
