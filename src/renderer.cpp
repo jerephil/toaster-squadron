@@ -145,8 +145,25 @@ HRESULT Renderer::Resize() {
     hr = context_->CreateLinearGradientBrush(D2D1::LinearGradientBrushProperties(
         D2D1::Point2F(0, 0), D2D1::Point2F(0, static_cast<float>(h))), collection.Get(), &sky_);
     if (FAILED(hr)) return hr;
+    hr = BuildBackdrop();
+    if (FAILED(hr)) return hr;
     ResetFlyers();
     return S_OK;
+}
+HRESULT Renderer::BuildBackdrop() {
+    backdropLayer_.Reset();
+    if (settings_.backdrop == 2) return S_OK;
+    // Same base scale as the 48x48 sprites, so backdrop pixels and sprite pixels match in size.
+    const int baseW = static_cast<int>((width_ + scale_ - 1) / scale_);
+    const int baseH = static_cast<int>((height_ + scale_ - 1) / scale_);
+    layout_ = MakeBackdropLayout(baseW, baseH);
+    gridRows_.reserve(18 * 3);
+    const auto pixels = RasterizeBackdrop(layout_, settings_.backdrop, settings_.palette);
+    const auto properties = D2D1::BitmapProperties(D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM,
+                                                                  D2D1_ALPHA_MODE_PREMULTIPLIED), 96, 96);
+    return static_cast<ID2D1RenderTarget*>(context_.Get())->CreateBitmap(
+        D2D1::SizeU(static_cast<UINT32>(layout_.width), static_cast<UINT32>(layout_.height)), pixels.data(),
+        static_cast<UINT32>(layout_.width) * 4, properties, &backdropLayer_);
 }
 void Renderer::ResetFlyers() {
     flyers_.clear();
@@ -170,9 +187,6 @@ void Renderer::Line(float x0, float y0, float x1, float y1, D2D1_COLOR_F color, 
 }
 void Renderer::Backdrop(double elapsed) {
     const float w = static_cast<float>(width_), h = static_cast<float>(height_);
-    const float horizon = h * 0.64f;
-    const bool sunset = settings_.palette == 1;
-    const UINT32 accent = sunset ? 0xff659b : 0x55e6e0;
     context_->SetTransform(D2D1::Matrix3x2F::Identity());
     context_->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
     if (settings_.backdrop == 2) context_->Clear(Color(0x090d27));
@@ -183,50 +197,19 @@ void Renderer::Backdrop(double elapsed) {
         const float size = static_cast<float>(std::max(1, scale_ / 2));
         Rect(x, y, x + size, y + size, Color(0xe0d9ff, star.brightness));
     }
-    if (settings_.backdrop == 2) return;
-    context_->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-    const float radius = std::min(w * 0.19f, h * 0.23f);
-    const auto center = D2D1::Point2F(w * 0.5f, horizon - radius * 0.72f);
-    for (int i = 6; i >= 1; --i) {
-        brush_->SetColor(Color(0xff659b, 0.018f));
-        context_->FillEllipse(D2D1::Ellipse(center, radius * (1 + i * 0.07f), radius * (1 + i * 0.07f)), brush_.Get());
-    }
-    // The ellipse is clipped into bands, with widening dark cuts near its base.
-    for (int band = 0; band < 12; ++band) {
-        const float top = center.y - radius + radius * 2 * band / 12;
-        const float bottom = center.y - radius + radius * 2 * (band + 1) / 12;
-        const float gap = band < 4 ? 0 : radius * (0.005f + band * 0.0025f);
-        context_->PushAxisAlignedClip(D2D1::RectF(center.x - radius, top, center.x + radius, bottom - gap), D2D1_ANTIALIAS_MODE_ALIASED);
-        brush_->SetColor(Color(band < 4 ? 0xffd385 : band < 8 ? 0xffaa60 : 0xff659b));
-        context_->FillEllipse(D2D1::Ellipse(center, radius, radius), brush_.Get());
-        context_->PopAxisAlignedClip();
-    }
+    if (settings_.backdrop == 2 || !backdropLayer_) return;
+    // Pixel-art sun, halo, ridges, floor and converging grid lines, upscaled without smoothing.
+    const float s = static_cast<float>(scale_);
+    const auto dest = D2D1::RectF(0, 0, layout_.width * s, layout_.height * s);
+    static_cast<ID2D1RenderTarget*>(context_.Get())->DrawBitmap(backdropLayer_.Get(), &dest, 1, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR);
     if (settings_.backdrop == 1) return;
-    // Distant low, triangular wireframe ridges, intentionally below the sun.
-    for (int i = -1; i < 11; ++i) {
-        const float x = w * i / 10, next = x + w / 10;
-        const float peakX = x + w * 0.046f;
-        const float peakY = horizon - h * (0.035f + 0.025f * std::sin(i * 2.7f) * std::sin(i * 2.7f));
-        Line(x, horizon, peakX, peakY, Color(0xd641a0, 0.5f));
-        Line(peakX, peakY, next, horizon, Color(0xd641a0, 0.5f));
-        Line(peakX, peakY, x + w * 0.065f, horizon, Color(0xd641a0, 0.25f));
-    }
-    Rect(0, horizon, w, h, Color(0x090d27));
-    const float thickness = std::max(1.0f, h / 1080);
-    for (int i = -10; i <= 10; ++i) {
-        const float bottomX = w * 0.5f + i * w * 0.16f;
-        Line(w * 0.5f, horizon, bottomX, h, Color(accent, 0.09f), thickness * 5);
-        Line(w * 0.5f, horizon, bottomX, h, Color(accent, 0.65f), thickness);
-    }
+    // Scrolling grid rows snap to whole base pixels, so they step toward the viewer like sprite pixels.
     const double gridRate = settings_.gridSpeed == 0 ? 0 : settings_.gridSpeed == 1 ? 0.045 : 0.12;
     const float phase = static_cast<float>(std::fmod(elapsed * gridRate, 1.0));
-    for (int i = 0; i < 18; ++i) {
-        const float depth = std::fmod(static_cast<float>(i) / 18 + phase, 1.0f);
-        const float y = horizon + (h - horizon) * std::pow(depth, 2.8f);
-        Line(0, y, w, y, Color(accent, 0.09f), thickness * 5);
-        Line(0, y, w, y, Color(accent, 0.25f + depth * 0.5f), thickness);
+    ScrollingGridRows(layout_, phase, settings_.palette, gridRows_);
+    for (const auto& row : gridRows_) {
+        Rect(0, row.y * s, w, (row.y + 1) * s, Color(row.rgb, row.alpha));
     }
-    Line(0, horizon, w, horizon, Color(0xff659b, 0.8f), thickness * 2);
 }
 void Renderer::DrawFlyers(float delta) {
     animationTime_ += delta;
