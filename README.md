@@ -2,7 +2,11 @@
 
 My personal, free Windows 11 screensaver: original chunky pixel-art winged toasters and toast drift diagonally across a neon sunset and scrolling perspective grid. C++20, Win32, Direct2D; no audio or external runtime to install.
 
-**Early build — awaiting my Windows 11 PC test.** [The art brief](docs/ART-BRIEF.md) defines my sprite sheets and palette. Screenshots/GIF: TODO — capture the running Windows build after PC testing.
+**Early build — awaiting my Windows 11 PC test.** [The art brief](docs/ART-BRIEF.md) defines my sprite sheets and palette. 
+
+![My running Toaster Squadron build with original placeholder sprites over the synthwave backdrop](docs/screenshot.png)
+
+Screenshot from my running CI build on a GitHub-hosted Windows desktop, using the original placeholder art.
 
 Toaster Squadron is an independent, original project and is not affiliated with or endorsed by Berkeley Systems or the makers of After Dark.
 
@@ -30,11 +34,11 @@ cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
 
-The output is `build\Release\ToasterSquadron.scr`. Windows SDK libraries are the only application dependencies; Release uses the static MSVC runtime. CI uses public GitHub-hosted Windows runners only.
+The output is `build\Release\ToasterSquadron.scr`. Windows SDK libraries are the only application dependencies; Release uses the static MSVC runtime. CI uses public GitHub-hosted Windows runners only. If `windows-latest` has moved to a newer Visual Studio, the workflow installs the VS 2022 build tools from Microsoft before configuring.
 
 ## Validation
 
-The Windows CI job builds with MSVC and exercises the settings dialog, live child preview and resizing, and full-screen monitor coverage with key/click exit. My [PC test checklist](docs/TESTING.md) covers appearance, mixed-DPI monitors, mouse jitter, and longer runs. The CI artifact is unsigned; it is not yet a published release.
+The Windows CI job builds with MSVC and exercises the settings dialog, live child preview and resizing, and full-screen monitor coverage with key/click/mouse exit and a mouse-jitter threshold. My [PC test checklist](docs/TESTING.md) covers appearance, mixed-DPI monitors, mouse jitter, and longer runs. The CI artifact is unsigned; it is not yet a published release.
 
 ## Art and license
 
