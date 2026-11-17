@@ -1,6 +1,6 @@
-"""Composite a full-screen preview like renderer.cpp: sky, stars, pixel layer (nearest x scale),
-scrolling rows, then sprites. Usage: preview_scene.py W H MODE PALETTE PHASE OUT.png ASSETS_DIR [PREVIEW_BIN]
-Build PREVIEW_BIN from tools/preview_backdrop.cpp + src/pixel_backdrop.cpp with any C++20 compiler.
+"""I composite my sky, stars, nearest-neighbor pixel layer, scrolling rows, and sprites.
+Usage: preview_scene.py W H MODE PALETTE PHASE OUT.png ASSETS_DIR [PREVIEW_BIN]
+I build PREVIEW_BIN from tools/preview_backdrop.cpp + src/pixel_backdrop.cpp with a C++20 compiler.
 """
 import random
 import subprocess
@@ -52,7 +52,7 @@ if MODE != 2:
     lw, lh, hz = map(int, res[0].split())
     raw = open(LAYER, "rb").read()
     layer = Image.frombuffer("RGBA", (lw, lh), raw, "raw", "BGRA", 0, 1)
-    # premultiplied -> straight for PIL compositing
+    # I convert premultiplied alpha to straight alpha for PIL compositing.
     lp = layer.load()
     for y in range(lh):
         for x in range(lw):

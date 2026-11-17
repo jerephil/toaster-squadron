@@ -42,4 +42,4 @@ The Windows CI job builds with MSVC and exercises the settings dialog, live chil
 
 ## Art and license
 
-My new sprite sheets came from Claude Design, following the [art brief](docs/ART-BRIEF.md). The sun, ridges, and grid now use matching chunky pixels. The four PNG sheets can be replaced in `assets/` without code changes. Do not run `tools/generate_assets.py`: it would overwrite the new art with the old placeholders. MIT licensed, copyright Jeremy W. Phillips; see [LICENSE](LICENSE).
+My new sprite sheets came from Claude Design, following the [art brief](docs/ART-BRIEF.md). The sun, ridges, and grid now use matching chunky pixels. The four PNG sheets can be replaced in `assets/` without code changes. Do not run `tools/generate_assets.py`: it would overwrite the new art with the old placeholders. I distribute this project under the MIT license; see [LICENSE](LICENSE).

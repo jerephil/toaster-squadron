@@ -1,4 +1,4 @@
-// Dumps the pixel backdrop layer + scroll rows for a given base size, mode, palette, phase.
+// I dump my backdrop layer and scroll rows for a supplied base size, mode, palette, and phase.
 #include "pixel_backdrop.h"
 #include <cstdio>
 #include <cstdlib>

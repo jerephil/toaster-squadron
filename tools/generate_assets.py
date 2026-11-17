@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate original placeholder PNG sheets and an ICO, using no packages."""
+"""I generate my original placeholder PNG sheets and icon without external packages."""
 from pathlib import Path
 import struct
 import zlib

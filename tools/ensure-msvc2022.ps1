@@ -1,4 +1,4 @@
-# windows-latest can move to a newer IDE; retain the requested VS 2022 toolchain.
+# I retain my VS 2022 toolchain when windows-latest moves to a newer IDE.
 $ErrorActionPreference = 'Stop'
 $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 $existing = & $vswhere -products '*' -version '[17.0,18.0)' -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath

@@ -1,4 +1,4 @@
-// Portable checks for the pixel-art backdrop rasterizer (no Windows APIs).
+// I test my pixel-art backdrop rasterizer without Windows APIs.
 #include "pixel_backdrop.h"
 #include <cstdint>
 #include <iostream>
@@ -31,7 +31,7 @@ void FullScene(int palette) {
         for (int x = 0; x < l.width; ++x) Check(Alpha(At(px, l, x, y)) == 255, "floor must be opaque");
     Check(Rgb(At(px, l, 0, l.horizon)) == (palette == 1 ? 0xffaa60u : 0xff659bu), "horizon line color");
 
-    // Sun column: all three band colors and at least five dark cuts above the horizon.
+    // I check my sun column for all three band colors and at least five dark cuts above the horizon.
     const int cx = l.width / 2;
     std::set<std::uint32_t> colors;
     int cuts = 0;
@@ -43,7 +43,7 @@ void FullScene(int palette) {
     }
     Check(colors.count(0xffd385) && colors.count(0xffaa60) && colors.count(0xff659b), "sun bands");
     Check(cuts >= 5, "sun needs dark stripe cuts");
-    // Center grid line reaches the bottom row and uses the palette accent.
+    // I check that my center grid line reaches the bottom row in the palette accent.
     const auto bottom = Rgb(At(px, l, cx, l.height - 1));
     Check(bottom != 0x090d27, "center grid line missing");
     Check(palette == 1 ? ((bottom >> 16) & 0xff) > 0xb0 : (bottom & 0xff) > 0xa0, "grid accent");

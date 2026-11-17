@@ -1,10 +1,10 @@
 # Handoff: pixel-art sprites and synthwave backdrop
 
-> Historical Claude Design handoff, retained for provenance. The Windows build and tests subsequently passed, the screenshot was refreshed, and Jeremy approved stable v0.1.0 after successful Windows 11 testing on November 17, 2026. The pending checks and release hold below describe the original handoff; see [TESTING.md](TESTING.md) for current release status.
+> I retain this historical Claude Design handoff for provenance. My Windows build and tests subsequently passed, I refreshed the screenshot, and I approved stable v0.1.0 after my successful Windows 11 testing on November 17, 2026. I retain the pending checks and release hold below as a record of the original handoff; my current release status is in [TESTING.md](TESTING.md).
 
-Owner: Jeremy Phillips. Repo: `jerephil/toaster-squadron`. Branch: `pixel-art-backdrop`, based on `main`.
+My repo: `jerephil/toaster-squadron`. My branch: `pixel-art-backdrop`, based on `main`.
 
-This handoff covers two changes:
+I use this handoff to track two changes:
 
 1. Final sprite art replaces the placeholder sheets.
 2. The sun, ridges and grid floor now draw as chunky pixel art at the same pixel size as the flyers. They used to be smooth antialiased vector shapes.
@@ -115,7 +115,7 @@ Performance: the layer is built once per resize. Per frame, the cost is one bitm
 5. **Screenshot.** `docs/screenshot.png` still shows the old vector backdrop and placeholder sprites. Let the CI capture step regenerate it, or capture one on Windows 11.
 6. **Sprite review on hardware.** At 1x scale (screens under 1280 x 720, and the Screen Saver Settings preview box), confirm the flyers still read clearly. The `#17182F` outline blends into the dark sky, so the fills carry the silhouette there.
 
-## Optional follow-ups (only if Jeremy asks)
+## Optional follow-ups I may choose
 
 - Band the sky into 6 to 8 hard color steps with dither so it matches the pixel art. This would be a change to `Resize()` and the sky brush, or done by drawing the sky into the layer.
 - Make the star size follow the base pixel. Today it is `max(1, scale_ / 2)` screen pixels.
@@ -125,5 +125,5 @@ Performance: the layer is built once per resize. Per frame, the cost is one bitm
 
 - Keep all art original. Do not imitate existing screensaver characters, sprites, branding or layouts.
 - No audio.
-- Do not create a tag or a GitHub Release. Jeremy approves `v0.1.0` after the Windows checklist in `docs/TESTING.md`.
+- At the time of this handoff, I had not yet approved a tag or GitHub Release. I would approve `v0.1.0` after my Windows checklist in `docs/TESTING.md`.
 - The license stays MIT.

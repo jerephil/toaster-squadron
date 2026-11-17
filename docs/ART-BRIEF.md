@@ -1,6 +1,6 @@
 # Toaster Squadron — Claude Design sprite brief
 
-**Claude Design** supplied the new sprite sheets for Jeremy's personal, MIT-licensed Windows screensaver. This brief records their export contract and retains the copyable commission prompt for future art revisions. The checked-in sheets are the new art; do not run `tools/generate_assets.py`, which would overwrite them with old placeholders. The original placeholder icon stays in place.
+**Claude Design** supplied the new sprite sheets for my personal, MIT-licensed Windows screensaver. I keep my sprite export contract and the copyable commission prompt here for future art revisions. The checked-in sheets are the new art; do not run `tools/generate_assets.py`, which would overwrite them with old placeholders. The original placeholder icon stays in place.
 
 Design a playful squadron of rounded retro chrome toasters and expressive toast with small, round, featherless wings. Give the toaster two short slots, a violet circular dial, a coral side lever, and a cyan front-left glint. Give toast a slightly lopsided cloud-shaped crown and tiny square eyes. Use chunky, deliberate 8-bit pixel clusters. Everything must be original: do not copy, trace, or imitate existing screensaver characters, sprites, silhouettes, color arrangements, branding, or layouts.
 
