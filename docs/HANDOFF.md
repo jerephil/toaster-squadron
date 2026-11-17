@@ -1,5 +1,7 @@
 # Handoff: pixel-art sprites and synthwave backdrop
 
+> Historical Claude Design handoff, retained for provenance. The Windows build and tests subsequently passed, the screenshot was refreshed, and Jeremy approved stable v0.1.0 after successful Windows 11 testing on November 17, 2026. The pending checks and release hold below describe the original handoff; see [TESTING.md](TESTING.md) for current release status.
+
 Owner: Jeremy Phillips. Repo: `jerephil/toaster-squadron`. Branch: `pixel-art-backdrop`, based on `main`.
 
 This handoff covers two changes:
